@@ -26,7 +26,7 @@ plt.subplot(122), plt.imshow(edges, cmap='gray'), plt.title('Edge map')
 # Apply Hough transform to parametrize the lines
 # Hint 1: Offset resolution of 2 pixels and slope resolution of 2 degrees work well in this case
 # Hint 2: A suitable value for the accumulator threshold is 190
-lines = cv2.HoughLines(edges,1,np.pi/180,200)
+lines = cv2.HoughLines(edges,2,2*np.pi/180,190)
 
 # Let's get rid of the unnecessary dimension
 lines = lines[:, 0, :]
@@ -36,8 +36,8 @@ result = np.copy(img)
         
 for line in lines:
     
-    rho = 450
-    theta = 50 
+    rho = [line][0][0] #какой резолюшн для офсета
+    theta = [line][0][1] #какой резолюшн для наклона
     
     a = math.cos(theta)
     b = math.sin(theta)
@@ -54,10 +54,10 @@ plt.subplot(121), plt.imshow(edges, cmap='gray'), plt.title('Edge map')
 plt.subplot(122), plt.imshow(result, cmap='gray'), plt.title('Hough lines')
 
 # Filter out all lines that are approximately horizontal (+/- 20 degrees). 
-filtered_lines = []
+Filtered_lines = [0.34906585]
 for line in lines:
     # Extract theta for current line (remember Hough works with radians)
-    theta = 
+    theta = 1.57079633
     # Keep line if theta is not horizontal
-    if ...
-        filtered_lines.append(line)
+   # if line > theta
+       # filtered_lines.append(line)
