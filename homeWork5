@@ -14,29 +14,41 @@ colors = np.array([[0, 0, 0],
                    [64, 64, 64],
                    [192, 192, 192],
                    [255, 255, 255]])
+import math
 # Cast the image to float
-img = img.astype(float)/255
+#img = img.astype(float)/255
 #img = np.float32
+img = img.astype(np.float32)
 
 # Prepare for quantization
 rows, cols, channels = img.shape
 quantized = np.zeros_like(img)
+
+def find_closest_colour_from_pallette(pixel,colors):
+    colors = np.array(colors)
+    color = np.array(pixel)
+    distances = np.sqrt(np.sum((colors-color)**2,axis=1))
+    index_of_smallest = np.where(distances==np.amin(distances))
+    smallest_distance = colors[index_of_smallest]
+    return smallest_distance 
 
 # Apply quantization
 for r in range(rows):
     for c in range(cols):
         # Extract the original pixel value
         pixel = list(img[r, c, :])
+        # print(pixel)
         # Find the closest colour from the pallette (using absolute value/Euclidean distance)
         # Note: You may need more than one line of code here
-        new_pixel = ? (pixel) 
+        new_pixel = find_closest_colour_from_pallette(pixel,colors)
+        print(new_pixel )
         
         # Apply quantization
         quantized[r, c, :] = new_pixel
 
 # Show quantized image (don't forget to cast back to uint8)
-img = (255*img).astype(np.uint8)
-plt.imshow(img)
+quantized = (255*quantized).astype(np.uint8)
+plt.imshow(quantized)
 
 # Compute average quantization error
 avg_quant_error = np. mean ( (img - quantized) **2)
