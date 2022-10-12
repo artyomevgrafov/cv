@@ -56,36 +56,53 @@ plt.imshow(quantized)
 
 # Compute average quantization error
 avg_quant_error = np. mean ( (img - quantized) **2)
+print(avg_quant_error)
 
 # Make a temporal copy of the original image, we will need it for error diffusion
 img_tmp = np.copy(img)
 dithering = np.zeros_like(img)
 
+def find_closest_colour_from_pallette(pixel,colors):
+    colors = np.array(colors)
+    color = np.array(pixel)
+    distances = np.sqrt(np.sum((colors-color)**2,axis=1))
+    index_of_smallest = np.where(distances==np.amin(distances))
+    smallest_distance = colors[index_of_smallest]
+    return smallest_distance
+
+def quant_error_Fun(ref, target):
+    error = ref.astype(np.float32) - target.astype(np.float32)
+    mse = np.mean(error**2)
+    return 10 * np.log10((255**2)/mse)
+
 for r in range(1, rows-1):
     for c in range(1, cols-1):
         # Extract the original pixel value
-        pixel = list(img[r, c, :])
-        # Find the closest colour from the pallette (using absolute value/Euclidean distance)
-        # Note: You may need more than one line of code here
-        new_pixel = ?        
-        
-        # Compute quantization error
-        quant_error = pixel - new pixel
-        
-        # Diffuse the quantization error accroding to the FS diffusion matrix
-        # Note: You may need more than one line of code here
-        img tmp [r][c] = new pixel
-        img_tmp[r + 11 [c] = img_tmp[r + 11 [c] + quant error * 7 / 16
-        img_tmp[r - 1] [c + 1] = img_tmp [r - 1] [c + 1] + quant_error * 3 / 16
-        img_tmp [r]Ic + 1] = img_tmp [r]Ic + 1] + quant error * 5 / 16
-        img_tmp[r + 1] [c + 1] = img_tmp[r + 1][c + 1] + quant_error * 1 / 16 
-        
-        # Apply dithering
-        dithering[r, c, :] = new_pixel
-        
-        # Show quantized image (don't forget to cast back to uint8)
-plt.subplot(121), plt.imshow(...)   # optimally quantized
-plt.subplot(122), plt.imshow(...)   # dithering
+        pixel = img_tmp[r] [c]
+        #print(pixel)
+# Find the closest colour from the pallette (using absolute value/Euclidean distance)
+# Note: You may need more than one line of code here
+        new_pixel = find_closest_colour_from_pallette(pixel,colors)[0]
+        #print(new_pixel)
+# Compute quantization error
+quant_error = pixel-new_pixel
+quant_error = quant_error_Fun(pixel, new_pixel)
+print(quant_error)
+
+# Diffuse the quantization error accroding to the FS diffusion matrix
+# Note: You may need more than one line of code here
+img_tmp[r] [c] = new_pixel
+    
+img_tmp[r + 1] [c    ] = img_tmp [r + 1] [c    ] + quant_error * 7 / 16
+img_tmp[r - 1] [c + 1] = img_tmp [r - 1] [c + 1] + quant_error * 3 / 16
+img_tmp[r    ] [c + 1] = img_tmp [r    ] [c + 1] + quant_error * 5 / 16
+img_tmp[r + 1] [c + 1] = img_tmp [r + 1] [c + 1] + quant_error * 1 / 16
+
+ # Apply dithering
+dithering[r, c, :] = new_pixel
+# Show quantized image (don't forget to cast back to uint8)
+plt.subplot(121), plt.imshow(img_tmp)   # optimally quantized
+plt.subplot(122), plt.imshow(dithering)   # dithering
 
 # Compute average quantization error for dithered image
 avg_dith_error = 
