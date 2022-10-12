@@ -36,12 +36,16 @@ def find_closest_colour_from_pallette(pixel,colors):
 for r in range(rows):
     for c in range(cols):
         # Extract the original pixel value
-        pixel = list(img[r, c, :])
+        #pixel = list(img[r, c, :])
+        pixel = img[r, c]
         # print(pixel)
         # Find the closest colour from the pallette (using absolute value/Euclidean distance)
         # Note: You may need more than one line of code here
-        new_pixel = find_closest_colour_from_pallette(pixel,colors)
-        print(new_pixel )
+        new_pixel = find_closest_colour_from_pallette(pixel,colors)[0]
+        #new_pixel = np.squeeze(new_pixel)
+        #new_pixel = list((np.array(new_pixel)).reshape(3,))
+        #print(new_pixel )
+        
         
         # Apply quantization
         quantized[r, c, :] = new_pixel
