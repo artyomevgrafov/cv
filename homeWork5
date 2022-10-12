@@ -101,6 +101,8 @@ img_tmp[r + 1] [c + 1] = img_tmp [r + 1] [c + 1] + quant_error * 1 / 16
  # Apply dithering
 dithering[r, c, :] = new_pixel
 # Show quantized image (don't forget to cast back to uint8)
+img_tmp = (255*img_tmp).astype(np.uint8)
+dithering = (255*dithering).astype(np.uint8)
 plt.subplot(121), plt.imshow(img_tmp)   # optimally quantized
 plt.subplot(122), plt.imshow(dithering)   # dithering
 
