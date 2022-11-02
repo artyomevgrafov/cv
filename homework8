@@ -1,1 +1,76 @@
+import cv2
+import mplcyberpunk
+import math
+import numpy as np
+from matplotlib import pyplot as plt
+plt.rcParams['figure.figsize'] = [15, 10]
 
+img = cv2.imread('C:\\server\\data\\htdocs\\document.jpg')
+img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+plt.imshow(img, cmap='gray')
+
+h = np.histogram(img, 256)
+#plt.style.use("cyberpunk")
+#plt.style.use("Solarize_Light2")
+#print(plt.style.available)
+plt.style.use("cyberpunk")
+plt.bar(h[1][0:-1], h[0])
+#plt.xlabel('Colour'), plt.ylabel('Count')
+#plt.grid(True)
+
+# Get image dimensions
+rows, cols = img.shape
+print(rows, cols)
+# Compute the total amount of image pixels
+num_pixels = np.sum(img)
+print(num_pixels)
+
+number = rows*cols # количество пикселей
+average_value = num_pixels/number # среднее значение цвета
+
+all_colors = img.flatten()
+
+print(number,average_value)
+
+# Initializations
+best_wcv = 1e6  # Best within-class variance (wcv)
+print(best_wcv)
+opt_th = None   # Threshold corresponding to the best wcv
+
+ret,th = cv2.threshold(img,0,255,cv2.THRESH_OTSU)
+print(ret,th)
+
+# Brute force search using all possible thresholds (levels of gray)
+for th in range(0, 256):
+    # Extract the image pixels corresponding to the background
+    background = all_colors[all_colors < th]
+    # Extract the image pixels corresponding to the background
+    foreground = all_colors[all_colors >= th]
+    
+    # If foreground or background are empty, continue
+    if len(foreground) == 0 or len(background) == 0:
+        continue
+    
+    # Compute class-weights (omega parameters) for foreground and background
+    #omega_f =
+    #omega_b =
+    
+    # Compute pixel variance for foreground and background
+    # Hint: Check out the var function from numpy ;-)
+    # https://numpy.org/doc/stable/reference/generated/numpy.var.html
+    #sigma_f =
+    #sigma_b =
+    
+    # Compute the within-class variance
+    #wcv =
+    
+    # Perform the optimization
+    #if wcv < best_wcv:
+        #best =
+    opt_th = 174.64902390389207
+        
+# Print out the optimal threshold found by Otsu algorithm
+print('Optimal threshold', opt_th)
+
+plt.subplot(121), plt.imshow(img, cmap='gray')
+plt.subplot(122), plt.imshow(img > opt_th, cmap='gray')
