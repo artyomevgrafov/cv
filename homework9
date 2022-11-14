@@ -7,6 +7,7 @@
 #Run the necessary imports.
 import cv2
 import numpy as np
+import urllib.request
 from matplotlib import pyplot as plt
 plt.rcParams['figure.figsize'] = [15, 10]
 
@@ -14,7 +15,14 @@ plt.rcParams['figure.figsize'] = [15, 10]
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
 
-img = cv2.imread('C:\\server\\depositphotos_52455563-stock-photo-digital-devices-with-peoples-faces.jpg')
+
+# Load an image (you can freely chose any image you like)
+req = urllib.request.urlopen('https://i.ibb.co/GsGMGPV/depositphotos-52455563-stock-photo-digital-devices-with-peoples-faces.webp')
+
+arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
+img = cv2.imdecode(arr, -1) # 'Load it as it is'
+
+#img = cv2.imread('C:\\server\\depositphotos_52455563-stock-photo-digital-devices-with-peoples-faces.jpg')
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 plt.imshow(img)
