@@ -1,64 +1,49 @@
+#HOMEWORK 9
+#In this homework, you are going to use the dlib face detector and apply it to an image of your liking. You can follow the procedure shown in lesson 9. Please always comment your code so I can see what you're doing :-)
+
+#For this homework we are not going to provide you with any code, you'll have to build the face detector on your own.
+
+#Step 0
+#Run the necessary imports.
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 plt.rcParams['figure.figsize'] = [15, 10]
 
-casc_path = '/home/janko/Projects/envs/cv/lib/python3.8/site-packages/cv2/data/haarcascade_frontalface_default.xml'
-face_cascade = cv2.CascadeClassifier(casc_path)
+# Step 1 Load an image (any image that contains faces).
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
 
-img = cv2.imread('/home/janko/Pictures/janko2.jpg')
+img = cv2.imread('C:\\server\\depositphotos_52455563-stock-photo-digital-devices-with-peoples-faces.jpg')
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 plt.imshow(img)
 
 # minNeighbors = 0 shows all the detection at all scale, a value of approx. 5 shall felter out all the spurious detections
-faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, flags=cv2.CASCADE_SCALE_IMAGE)
+faces = face_cascade.detectMultiScale(gray, 1.3, 1)
+print(faces)
 
 print('Number of detected faces:', len(faces))
+
 
 # Draw rectangle around each face
 result = np.copy(img)
 faces_img = []
-for (x, y, w, h) in faces: 
+
+colorList=[(0,255,0),(255,0,0),(0,0,155),(0,0,55)] # etc ...
+i=0
+for (x,y,w,h) in faces:
+  cv2.rectangle(result, (x, y), (x+w, y+h), colorList[i], 2)
+  i=i+1
+print(colorList[0])
+print(colorList[1])
+print(colorList[2])
+print(colorList[3])
+
+    
+# for (x, y, w, h) in faces: 
     # Draw rectangle around the face
-    cv2.rectangle(result, (x, y), (x+w, y+h), (0, 255, 0), 3)
-    faces_img.append(img[y:y+h, x:x+w, :])
+    # cv2.rectangle(result, (x, y), (x+w, y+h), (0, 255, 0), 3)
+faces_img.append(result[y:y+h, x:x+w, :])
     
 plt.imshow(result)
-
-plt.subplot(121), plt.imshow(result, cmap='gray')
-plt.subplot(122), plt.imshow(faces_img[0])
-import dlib
-# Let's load the detector
-detector = dlib.get_frontal_face_detector()
-# Detect faces, see http://dlib.net/face_detector.py.html
-# 1 --> upsampling factor
-rects = detector(gray, 1)
-
-print('Number of detected faces:', len(rects))
-print(rects)
-print(rects[0].left)
-
-def rect_to_bb(rect):
-    # Dlib rect --> OpenCV rect
-    x = rect.left()
-    y = rect.top()
-    w = rect.right() - x
-    h = rect.bottom() - y
-
-    return (x, y, w, h)
-
-
-# Draw rectangle around each face
-result_dlib = np.copy(img)
-faces_dlib_img = []
-for rect in rects:    
-    # Draw rectangle around the face
-    x, y, w, h = rect_to_bb(rect)
-    print(x, y, w, h)
-    cv2.rectangle(result_dlib, (x, y), (x+w, y+h), (0, 255, 0), 3)
-    faces_dlib_img.append(img[y:y+h, x:x+w, :])
-    
-
-plt.subplot(121), plt.imshow(result), plt.title('Viola-Jones')
-plt.subplot(122), plt.imshow(result_dlib), plt.title('dlib')
