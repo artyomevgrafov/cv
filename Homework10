@@ -1,1 +1,38 @@
+import os
+import cv2,imutils
+import pickle
+import numpy as np
+from matplotlib import pyplot as plt
 
+# Set up tracker
+tracker_types = ['MIL','KCF', 'CSRT']
+tracker_type = tracker_types[2]
+tracker = cv2.legacy.TrackerCSRT_create()
+camera = False
+if camera:
+    video = cv2.VideoCapture(0)
+else:
+    video = cv2.VideoCapture('C:\\auto.mp4')
+    #video = cv2.VideoCapture("rtsp://admin:<port>@<ip>/xyz/video.smp")
+    #video = cv2.VideoCapture("rtsp://admin:12345qwert@93.170.114.216:8080/out.h264")
+    # rtsp://admin:12345qwert@93.170.114.216:8080/Streaming/Channels/102  
+_,frame = video.read()
+frame = imutils.resize(frame,width=720)
+BB = (264, 169, 58, 44)
+#BB = cv2.selectROI(frame,False) #выделить обьект
+print(BB)
+tracker.init(frame,BB)
+while True:
+    _,frame = video.read()
+    frame = imutils.resize(frame,width=720)
+    track_success,BB = tracker.update(frame)
+    if track_success:
+        top_left = (int(BB[0]),int(BB[1]))
+        bottom_right = (int(BB[0]+BB[2]),int(BB[1]+BB[3]))
+        cv2.rectangle(frame,top_left,bottom_right,(0,255,0),5)
+    cv2.imshow('Output',frame)
+    key = cv2.waitKey(1) & 0xff
+    if key == ord('q'):
+        break
+video.release()
+cv2.destroyAllWindows()
